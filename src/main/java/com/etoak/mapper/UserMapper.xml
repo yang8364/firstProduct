@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+
+<!-- 使用namespace的话sql搜索定位会比较方便 -->
+<mapper namespace="com.etoak.dao.UserMapper">
+
+	<resultMap id="UserMap" type="com.etoak.pojo.User">
+        <result property="id" column="id"/>
+        <result property="userName" column="user_name"/>
+        <result property="password" column="password"/>
+        <result property="age" column="age"/>
+	</resultMap>
+	<!-- 分页查询接口 -->
+	<!-- <select id="getUserListPage" parameterType="com.etoak.pojo.User"
+		resultMap="UserMap">
+		select * from user
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			<if test="userName!=null and userName!=''">
+				AND user_name = #{userName}
+			</if>
+			<if test="password!=null and password!=''">
+				AND password = #{password}
+			</if>
+			<if test="age!=null">
+				AND age = #{age}
+			</if>
+		</trim> 
+	</select> -->
+	<!-- 不分页查询接口 -->
+	<select id="getUserList" parameterType="com.etoak.pojo.User"
+		resultMap="UserMap">
+		select * from user
+		<trim prefix="WHERE" prefixOverrides="AND | OR">
+			 <if test="userName!=null and userName!=''">
+				AND user_name = #{userName}
+	        </if>
+			 <if test="password!=null and password!=''">
+				AND password = #{password}
+	        </if>
+			<if test="age!=null">
+				AND age = #{age}
+			</if>
+		</trim> 
+	</select>
+	<!-- 按编号查询 -->
+	<select id="getUserById" parameterType="int" resultMap="UserMap">
+		select *
+		from user where id = #{id}
+	</select>
+	<!-- 添加 -->
+	<insert id="insertUser" parameterType="com.etoak.pojo.User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user (
+        	id ,
+        	user_name ,
+        	password ,
+        	age 
+        ) VALUES (
+        	#{id} ,
+        	#{userName} ,
+        	#{password} ,
+        	#{age} 
+        )
+	</insert>
+	<!-- 批量添加 -->
+	<insert id="insertUserBatch" parameterType="java.util.List"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey resultType="long" keyProperty="id"
+			order="AFTER">
+			SELECT
+			LAST_INSERT_ID()
+		</selectKey>
+        INSERT INTO user (
+        	id ,
+        	user_name ,
+        	password ,
+        	age 
+        ) VALUES 
+		<foreach collection="list" item="com.etoak.pojo.User" index="index"
+			separator=",">
+			(
+				#{User.id} ,
+				#{User.userName} ,
+				#{User.password} ,
+				#{User.age} 
+			)
+		</foreach>
+	</insert>
+	<!-- 修改 -->
+	<update id="updateUser" >
+        UPDATE user 
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="userName!=null and userName!=''">
+	        user_name = #{userName},
+	        </if>
+			<if test="password!=null and password!=''">
+	        password = #{password},
+	        </if>
+			<if test="age!=null">
+	        age = #{age},
+	        </if>
+		</trim>  
+        WHERE 
+	        id = #{id} 
+	</update>
+	<!-- 删除 -->
+	<delete id="deleteUser" parameterType="int">
+        UPDATE user set state='X' WHERE
+        id = #{id} 
+    </delete>
+	
+</mapper>
+
