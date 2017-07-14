@@ -15,7 +15,7 @@ public class RedisDueue {
 
 	@RequestMapping("test")
 	public String regisTest() {
-		
+		System.out.println("regisTest 执行 ");
 		for (int i = 0; i < 1000; i++) {
 			sendMessage.sendMessage("java", i);
 		}
