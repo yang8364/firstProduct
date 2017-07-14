@@ -24,6 +24,7 @@ public class RedisDueue {
 	}
 	@RequestMapping("addUser")
 	public String addUser(){
+		System.out.println("and User start");
 		User user = new User();
 		user.setAge(10);
 		user.setUserName("etoak");
